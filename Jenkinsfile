@@ -12,7 +12,7 @@ node("master"){
     }
     
     stage("build"){
-        def mvnHome = tool 'M3'
+        def mvnHome = tool 'Maven'
         sh " ${mvnHome}/bin/mvn ${buildShell} "
         
         jarName = sh returnStdout: true, script: "cd target && ls *.jar"
