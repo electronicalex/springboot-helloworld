@@ -1,9 +1,5 @@
-String buildShell = "${params.buildShell}"
-String targetHosts = "${params.targetHosts}"
-String targetDir = "${params.targetDir}"
-String serviceName = "${params.serviceName}"
-String user = "${params.user}"
-String port = "${params.port}"
+String buildShell = "${params.buildCommand}"
+
 def jarName
 
 node("master"){
@@ -13,7 +9,7 @@ node("master"){
     
     stage("build"){
         def mvnHome = tool 'Maven'
-        sh " ${mvnHome}/bin/mvn ${buildShell}"
+        sh " ${mvnHome}/bin/mvn ${buildCommand}"
         
         jarName = sh returnStdout: true, script: "cd target && ls *.jar"
     }
