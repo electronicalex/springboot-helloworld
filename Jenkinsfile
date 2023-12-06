@@ -1,9 +1,9 @@
-String buildShell = "${env.buildShell}"
-String targetHosts = "${env.targetHosts}"
-String targetDir = "${env.targetDir}"
-String serviceName = "${env.serviceName}"
-String user = "${env.user}"
-String port = "${env.port}"
+String buildShell = "${params.buildShell}"
+String targetHosts = "${params.targetHosts}"
+String targetDir = "${params.targetDir}"
+String serviceName = "${params.serviceName}"
+String user = "${params.user}"
+String port = "${params.port}"
 def jarName
 
 node("master"){
@@ -13,11 +13,11 @@ node("master"){
     
     stage("build"){
         def mvnHome = tool 'Maven'
-        sh " ${mvnHome}/bin/mvn ${buildShell} "
+        sh " ${mvnHome}/bin/mvn ${buildShell}"
         
         jarName = sh returnStdout: true, script: "cd target && ls *.jar"
         jarName = jarName - "\n"
-        sh "mkdir -p /srv/salt/${serviceName} && mv  service.sh target/${jarName} /srv/salt/${serviceName} "
+        sh "mkdir -p /srv/salt/${serviceName} && mv service.sh target/${jarName} /srv/salt/${serviceName} "
     }
     
     stage("deploy"){
@@ -28,6 +28,5 @@ node("master"){
         sh " salt ${targetHosts} cmd.run 'su - ${user} -c \"cd ${targetDir} &&  sh service.sh stop\" ' "
         sh " salt ${targetHosts} cmd.run 'su - ${user} -c \"cd ${targetDir} &&  sh service.sh start ${jarName} ${port} ${targetDir}\" ' "
     }
-
 
 }
